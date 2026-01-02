@@ -1,73 +1,166 @@
-# Welcome to your Lovable project
+PeerGrade 🚀
 
-## Project info
+Learn by teaching. Prove by grading.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+PeerGrade is a full-stack skill credibility platform where users don’t just claim skills — they prove them.
+The platform enables peer-to-peer learning, structured assessments, and credibility scoring to build trustworthy skill profiles for students and professionals.
 
-## How can I edit this code?
+🧠 Problem Statement
 
-There are several ways of editing your application.
+Online learning has made skills accessible, but verifying real skill level is still a challenge.
 
-**Use Lovable**
+Resumes rely on self-claimed skills
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Certificates don’t reflect actual ability
 
-Changes made via Lovable will be committed automatically to this repo.
+Recruiters struggle to trust skill claims
 
-**Use your preferred IDE**
+Learners lack a way to prove what they truly know
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+💡 Solution
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+PeerGrade solves this by combining:
 
-Follow these steps:
+Learning by teaching
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Peer-based evaluations
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Structured skill assessments
 
-# Step 3: Install the necessary dependencies.
-npm i
+Credibility scoring instead of claims
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+Users earn credibility through real interactions, not just course completion.
+
+🔑 Key Features
+👥 Peer Swap Mode (Free)
+
+Users list:
+
+Skills they can teach
+
+Skills they want to learn
+
+Smart matching between learners and teachers
+
+Short interactive teaching sessions
+
+Post-session quizzes and feedback
+
+Skill credibility score updated after each session
+
+🎓 ProGrade Mode (Mentor-based)
+
+Verified professionals offer paid mentoring
+
+No skill swap required
+
+Mentor ranking based on teaching quality
+
+Professional badges for verified experts
+
+📊 Credibility Dashboard
+
+Skill-wise credibility scores
+
+Teaching and learning history
+
+Performance-based trust metrics
+
+Real data, no mock skill claims
+
+🏗️ Tech Stack
+
+Frontend
+
+React / Next.js
+
+Tailwind CSS
+
+Modern component-based UI
+
+Backend
+
+Node.js
+
+Express.js
+
+REST APIs
+
+Authentication & Database
+
+Firebase Authentication
+
+Firebase Firestore
+
+Other Tools
+
+Git & GitHub
+
+Environment-based configuration
+
+Secure API handling
+
+🔐 Security & Best Practices
+
+Secrets handled via environment variables
+
+No sensitive keys committed
+
+Clean Git history
+
+.gitignore configured properly
+
+Scalable and deployment-ready structure
+
+🚀 Getting Started (Local Setup)
+# Clone the repository
+git clone https://github.com/your-username/peergrade.git
+
+# Install frontend dependencies
+cd frontend
+npm install
 npm run dev
-```
 
-**Edit a file directly in GitHub**
+# Install backend dependencies
+cd ../backend
+npm install
+npm start
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
 
-**Use GitHub Codespaces**
+Make sure to add your Firebase credentials in environment variables before running.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+🎯 Use Cases
 
-## What technologies are used for this project?
+Students proving skills beyond certificates
 
-This project is built with:
+Peer-to-peer learning communities
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Skill-based hiring platforms
 
-## How can I deploy this project?
+Mentorship and knowledge exchange systems
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+🌱 Future Enhancements
 
-## Can I connect a custom domain to my Lovable project?
+AI-assisted quiz generation
 
-Yes, you can!
+Advanced skill credibility algorithms
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+Employer verification dashboards
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Skill heatmaps and analytics
+
+Role-based access control
+
+🏆 Hackathon Value
+
+Solves a real, industry-relevant problem
+
+Strong focus on trust and credibility
+
+Scalable product vision
+
+Practical full-stack implementation
+
+📌 Team & Contribution
+
+Built as a collaborative hackathon project with a focus on impact, feasibility, and real-world adoption.
