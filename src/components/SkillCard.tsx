@@ -15,6 +15,11 @@ interface SkillCardProps {
     rating?: number;
     verificationStatus?: "verified" | "pending" | "unverified";
   };
+  stats?: {
+    score: number;
+    sessions: number;
+    assignments?: number;
+  };
   type: "teach" | "learn";
   onEdit?: () => void;
   onRemove?: () => void;
@@ -29,6 +34,7 @@ const levelColors = {
 
 export function SkillCard({
   skill,
+  stats,
   type,
   onEdit,
   onRemove,
@@ -62,14 +68,34 @@ export function SkillCard({
               </Badge>
             </div>
 
-            {type === "teach" && skill.rating !== undefined && (
-              <div className="flex items-center gap-2">
-                <RatingStars rating={skill.rating} size="sm" />
-                <span className="text-sm text-muted-foreground">
-                  ({skill.rating.toFixed(1)})
-                </span>
-              </div>
-            )}
+            <div className="flex flex-col gap-1 mt-2">
+              {stats && (
+                <div className="flex items-center gap-2 bg-muted/50 p-1.5 rounded-md w-fit">
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs font-medium text-foreground">Score:</span>
+                    <span className={cn(
+                      "text-sm font-bold",
+                      stats.score >= 80 ? "text-green-600" :
+                        stats.score >= 60 ? "text-blue-600" : "text-muted-foreground"
+                    )}>
+                      {stats.score}
+                    </span>
+                  </div>
+                  <span className="text-muted-foreground text-xs">|</span>
+                  <span className="text-xs text-muted-foreground">{stats.sessions} sessions</span>
+                </div>
+              )}
+
+              {/* Legacy rating display, keep if no stats or just always show for teach */}
+              {type === "teach" && skill.rating !== undefined && !stats && (
+                <div className="flex items-center gap-2">
+                  <RatingStars rating={skill.rating} size="sm" />
+                  <span className="text-sm text-muted-foreground">
+                    ({skill.rating.toFixed(1)})
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center gap-1">
@@ -83,7 +109,7 @@ export function SkillCard({
                 <Edit2 className="h-4 w-4" />
               </Button>
             )}
-            {type === "learn" && onRemove && (
+            {onRemove && (
               <Button
                 variant="ghost"
                 size="icon"
