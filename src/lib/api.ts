@@ -1,6 +1,34 @@
+// ===============================
+// API BASE URL (PRODUCTION SAFE)
+// ===============================
+// IMPORTANT:
+// - Never hardcode localhost in this file
+// - Backend URL must come from environment variables
+
+export const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+if (!API_BASE_URL) {
+    console.error(
+        "VITE_API_URL is not defined. API calls will fail."
+    );
+}
+
 // API utility functions for backend communication
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+export async function signup(data: any) {
+    const res = await fetch(`${API_BASE_URL}/api/auth/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+        throw new Error("Signup failed");
+    }
+
+    return res.json();
+}
+
 
 // Storage keys
 export const USER_ID_KEY = 'peergrade_user_id';
@@ -40,7 +68,7 @@ async function baseFetch<T>(
     endpoint: string,
     options: RequestInit = {}
 ): Promise<T> {
-    const url = `${API_URL}${endpoint}`;
+    const url = `${API_BASE_URL}${endpoint}`;
 
     console.log(`[API] ${options.method || 'GET'} ${url}`);
 
