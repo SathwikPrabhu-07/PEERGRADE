@@ -1,0 +1,83 @@
+{
+    "indexes": [
+        {
+            "collectionGroup": "sessions",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "teacherId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "status",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "scheduledAt",
+                    "order": "ASCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "sessions",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "learnerId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "status",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "scheduledAt",
+                    "order": "ASCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "sessions",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "teacherId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "status",
+                    "order": "ASCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "sessions",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "learnerId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "status",
+                    "order": "ASCENDING"
+                }
+            ]
+        },
+        {
+            "collectionGroup": "skillScores",
+            "queryScope": "COLLECTION",
+            "fields": [
+                {
+                    "fieldPath": "userId",
+                    "order": "ASCENDING"
+                },
+                {
+                    "fieldPath": "finalScore",
+                    "order": "DESCENDING"
+                }
+            ]
+        }
+    ],
+    "fieldOverrides": []
+}

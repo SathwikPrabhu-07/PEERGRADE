@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Firebase Admin secrets
+backend/serviceAccountKey.json
+
+# Backend env
+backend/.env
+.env
+.env.local

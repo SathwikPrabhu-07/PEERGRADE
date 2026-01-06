@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Plus, GraduationCap, BookOpen } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Plus, GraduationCap, BookOpen, Loader2 } from "lucide-react";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { SkillCard } from "@/components/SkillCard";
 import { AddSkillModal } from "@/components/AddSkillModal";
@@ -7,112 +7,148 @@ import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-
-type TeachingSkill = {
-  id: string;
-  name: string;
-  level: "Beginner" | "Intermediate" | "Advanced";
-  category: string;
-  rating: number;
-  verificationStatus: "verified" | "pending" | "unverified";
-};
-
-type LearningSkill = {
-  id: string;
-  name: string;
-  level: "Beginner" | "Intermediate" | "Advanced";
-  category: string;
-};
-
-// Mock data
-const initialTeachingSkills: TeachingSkill[] = [
-  {
-    id: "1",
-    name: "Python Programming",
-    level: "Advanced",
-    category: "Programming",
-    rating: 4.8,
-    verificationStatus: "verified",
-  },
-  {
-    id: "2",
-    name: "UI/UX Design",
-    level: "Intermediate",
-    category: "Design",
-    rating: 4.5,
-    verificationStatus: "verified",
-  },
-  {
-    id: "3",
-    name: "Data Analysis",
-    level: "Intermediate",
-    category: "Programming",
-    rating: 4.2,
-    verificationStatus: "pending",
-  },
-];
-
-const initialLearningSkills: LearningSkill[] = [
-  {
-    id: "4",
-    name: "Machine Learning",
-    level: "Beginner",
-    category: "Programming",
-  },
-  {
-    id: "5",
-    name: "Spanish",
-    level: "Intermediate",
-    category: "Languages",
-  },
-];
+import { useAuth } from "@/contexts/AuthContext";
+import { getSkills, addSkill, deleteSkill, getTeachers, getSkillScores, Skill, SkillScore } from "@/lib/api";
 
 export default function MySkills() {
-  const [teachingSkills, setTeachingSkills] = useState(initialTeachingSkills);
-  const [learningSkills, setLearningSkills] = useState(initialLearningSkills);
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  // State - NO MEMOIZATION
+  const [teachingSkills, setTeachingSkills] = useState<Skill[]>([]);
+  const [learningSkills, setLearningSkills] = useState<Skill[]>([]);
+  const [skillScores, setSkillScores] = useState<SkillScore[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [addModalType, setAddModalType] = useState<"teach" | "learn">("teach");
-  const { toast } = useToast();
+
+  // Fetch skills - simple function, no useCallback
+  const fetchSkills = async () => {
+    if (!user?.id) return;
+
+    try {
+      console.log('🔥 [MySkills] Fetching skills for user:', user.id);
+
+      const [skillsResponse, scoresResponse] = await Promise.all([
+        getSkills(user.id),
+        getSkillScores(user.id)
+      ]);
+
+      console.log('🔥 [MySkills] Skills:', skillsResponse.data);
+      console.log('🔥 [MySkills] Scores:', scoresResponse.data);
+
+      setTeachingSkills(skillsResponse.data.teachingSkills);
+      setLearningSkills(skillsResponse.data.learningSkills);
+      setSkillScores(scoresResponse.data);
+    } catch (error) {
+      console.error('❌ [MySkills] Error fetching data:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load skills. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fetch on mount
+  useEffect(() => {
+    console.log('📌 MySkills mounted');
+    fetchSkills();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   const openAddModal = (type: "teach" | "learn") => {
     setAddModalType(type);
     setAddModalOpen(true);
   };
 
-  const handleAddSkill = (skill: { name: string; category: string; level: string }) => {
-    if (addModalType === "teach") {
-      const newTeachSkill = {
-        id: Date.now().toString(),
+  const handleAddSkill = async (skill: { name: string; category: string; level: string }) => {
+    if (!user?.id) return;
+
+    try {
+      console.log('🔥 [MySkills] Adding skill:', skill);
+      const response = await addSkill(user.id, {
         name: skill.name,
-        level: skill.level as "Beginner" | "Intermediate" | "Advanced",
         category: skill.category,
-        rating: 0,
-        verificationStatus: "pending" as const,
-      };
-      setTeachingSkills([...teachingSkills, newTeachSkill]);
-    } else {
-      const newLearnSkill = {
-        id: Date.now().toString(),
-        name: skill.name,
-        level: skill.level as "Beginner" | "Intermediate" | "Advanced",
-        category: skill.category,
-      };
-      setLearningSkills([...learningSkills, newLearnSkill]);
+        level: skill.level as 'Beginner' | 'Intermediate' | 'Advanced',
+        type: addModalType,
+      });
+
+      console.log('🔥 [MySkills] Skill added, response:', response.data);
+
+      // Refetch skills to ensure fresh data
+      await fetchSkills();
+
+      // Also verify teachers endpoint is updated
+      const teachersResponse = await getTeachers({});
+      console.log('🔥 [MySkills] Teachers after skill add:', teachersResponse.data);
+
+      toast({
+        title: "Skill added!",
+        description: `${skill.name} has been added to your ${addModalType === "teach" ? "teaching" : "learning"} skills.`,
+      });
+    } catch (error) {
+      console.error('❌ [MySkills] Error adding skill:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add skill. Please try again.",
+        variant: "destructive",
+      });
     }
-
-    toast({
-      title: "Skill added!",
-      description: `${skill.name} has been added to your ${addModalType === "teach" ? "teaching" : "learning"} skills.`,
-    });
   };
 
-  const handleRemoveLearningSkill = (id: string) => {
-    setLearningSkills(learningSkills.filter((s) => s.id !== id));
-    toast({
-      title: "Skill removed",
-      description: "The skill has been removed from your learning list.",
-    });
+  const handleRemoveSkill = async (id: string, type: "teach" | "learn") => {
+    if (!user?.id) return;
+
+    try {
+      console.log('🔥 [MySkills] Removing skill:', id);
+      await deleteSkill(user.id, id);
+
+      // Refetch skills to ensure fresh data
+      await fetchSkills();
+
+      // Also verify teachers endpoint is updated
+      const teachersResponse = await getTeachers({});
+      console.log('🔥 [MySkills] Teachers after skill delete:', teachersResponse.data);
+
+      toast({
+        title: "Skill removed",
+        description: "The skill has been removed successfully.",
+      });
+    } catch (error) {
+      console.error('❌ [MySkills] Error removing skill:', error);
+      toast({
+        title: "Error",
+        description: "Failed to remove skill. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
+
+  const getStats = (skillId: string) => {
+    const score = skillScores.find(s => s.skillId === skillId);
+    if (!score) return undefined;
+    return {
+      score: score.finalScore,
+      sessions: score.sessionCount,
+    };
+  };
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-muted-foreground">Loading your skills...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -156,9 +192,17 @@ export default function MySkills() {
                 {teachingSkills.map((skill) => (
                   <SkillCard
                     key={skill.id}
-                    skill={skill}
+                    skill={{
+                      id: skill.id,
+                      name: skill.name || skill.skillName || '',
+                      level: skill.level,
+                      category: skill.category,
+                      rating: skill.rating || 0,
+                      verificationStatus: skill.verificationStatus || 'unverified',
+                    }}
                     type="teach"
-                    onEdit={() => {}}
+                    onRemove={() => handleRemoveSkill(skill.id, "teach")}
+                    stats={getStats(skill.id)}
                   />
                 ))}
               </div>
@@ -199,9 +243,15 @@ export default function MySkills() {
                 {learningSkills.map((skill) => (
                   <SkillCard
                     key={skill.id}
-                    skill={skill}
+                    skill={{
+                      id: skill.id,
+                      name: skill.name || skill.skillName || '',
+                      level: skill.level,
+                      category: skill.category,
+                    }}
                     type="learn"
-                    onRemove={() => handleRemoveLearningSkill(skill.id)}
+                    onRemove={() => handleRemoveSkill(skill.id, "learn")}
+                    stats={getStats(skill.id)}
                   />
                 ))}
               </div>

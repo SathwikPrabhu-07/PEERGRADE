@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
 type Role = "teach" | "learn" | "both";
@@ -24,6 +25,7 @@ export default function Signup() {
   const [role, setRole] = useState<Role | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { signup } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,16 +39,22 @@ export default function Signup() {
     }
 
     setIsLoading(true);
-    
-    // Simulate signup
-    setTimeout(() => {
-      setIsLoading(false);
+
+    try {
+      await signup(name, email, password, role);
       toast({
         title: "Account created!",
         description: "Welcome to PeerGrade. Let's get started!",
       });
-      window.location.href = "/dashboard";
-    }, 1000);
+    } catch (error) {
+      toast({
+        title: "Signup failed",
+        description: error instanceof Error ? error.message : "Could not create account",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

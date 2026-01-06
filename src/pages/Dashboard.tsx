@@ -1,4 +1,4 @@
-import { Award, BookOpen, GraduationCap, Calendar, TrendingUp } from "lucide-react";
+import { Award, BookOpen, GraduationCap, Calendar, TrendingUp, Loader2 } from "lucide-react";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { StatCard } from "@/components/StatCard";
 import { SessionCard } from "@/components/SessionCard";
@@ -6,28 +6,33 @@ import { CredibilityBadge } from "@/components/CredibilityBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-
-// Mock data
-const upcomingSessions = [
-  {
-    id: "1",
-    skill: "Python Programming",
-    teacher: { name: "Alex Chen", avatar: "" },
-    learner: { name: "You", avatar: "" },
-    dateTime: new Date(Date.now() + 86400000).toISOString(),
-    status: "upcoming" as const,
-  },
-  {
-    id: "2",
-    skill: "UI/UX Design",
-    teacher: { name: "You", avatar: "" },
-    learner: { name: "Sarah Miller", avatar: "" },
-    dateTime: new Date(Date.now() + 172800000).toISOString(),
-    status: "upcoming" as const,
-  },
-];
+import { useAuth } from "@/contexts/AuthContext";
+import { useUserStats } from "@/hooks/useUserStats";
 
 export default function Dashboard() {
+  const { user } = useAuth();
+  const { stats, loading } = useUserStats();
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // All values directly from stats - no fallbacks needed, hook guarantees defaults
+  const {
+    credibilityScore,
+    sessionsCompleted,
+    skillsTaughtCount,
+    skillsLearnedCount,
+    avgRating,
+    upcomingSessions,
+  } = stats;
+
   return (
     <DashboardLayout>
       <div className="space-y-8 animate-fade-in">
@@ -35,7 +40,7 @@ export default function Dashboard() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-              Welcome back, Alex! 👋
+              Welcome back, {user?.name?.split(' ')[0] || 'Learner'}! 👋
             </h1>
             <p className="text-muted-foreground mt-1">
               Here's what's happening with your learning journey
@@ -48,32 +53,30 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Stats Grid */}
+        {/* Stats Grid - ALL FROM useUserStats */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             title="Credibility Score"
-            value={78}
+            value={credibilityScore}
             icon={Award}
             variant="gradient"
-            description="Top 25% of users"
+            description={credibilityScore > 0 ? "Overall Trust Score" : "Complete sessions to build"}
           />
           <StatCard
             title="Skills Taught"
-            value={5}
+            value={skillsTaughtCount}
             icon={GraduationCap}
-            trend={{ value: 20, positive: true }}
           />
           <StatCard
             title="Skills Learned"
-            value={8}
+            value={skillsLearnedCount}
             icon={BookOpen}
-            trend={{ value: 15, positive: true }}
           />
           <StatCard
             title="Sessions Completed"
-            value={24}
+            value={sessionsCompleted}
             icon={Calendar}
-            description="This month"
+            description="Total sessions"
           />
         </div>
 
@@ -89,21 +92,25 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="text-center">
-                <CredibilityBadge score={78} size="lg" className="mb-4" />
+                <CredibilityBadge score={credibilityScore} size="lg" className="mb-4" />
                 <p className="text-sm text-muted-foreground">
-                  Complete 2 more sessions to reach "Expert" level
+                  {credibilityScore >= 80
+                    ? "You are a trusted expert!"
+                    : credibilityScore > 0
+                      ? "Keep learning and teaching to increase your score."
+                      : "Complete sessions to start building your score."}
                 </p>
               </div>
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Sessions</span>
-                  <span className="font-medium">24/30</span>
+                  <span className="font-medium">{sessionsCompleted} completed</span>
                 </div>
                 <div className="h-2 bg-muted rounded-full overflow-hidden">
                   <div
                     className="h-full gradient-primary rounded-full transition-all duration-500"
-                    style={{ width: "80%" }}
+                    style={{ width: `${Math.min(sessionsCompleted * 3.33, 100)}%` }}
                   />
                 </div>
               </div>
@@ -111,19 +118,21 @@ export default function Dashboard() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Avg. Rating</span>
-                  <span className="font-medium">4.8/5.0</span>
+                  <span className="font-medium">
+                    {avgRating > 0 ? `${avgRating.toFixed(1)}/5.0` : '0/5.0'}
+                  </span>
                 </div>
                 <div className="h-2 bg-muted rounded-full overflow-hidden">
                   <div
                     className="h-full gradient-accent rounded-full transition-all duration-500"
-                    style={{ width: "96%" }}
+                    style={{ width: `${(avgRating / 5) * 100}%` }}
                   />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Upcoming Sessions */}
+          {/* Upcoming Sessions - FROM API */}
           <Card className="lg:col-span-2">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2">
@@ -135,14 +144,24 @@ export default function Dashboard() {
               </Button>
             </CardHeader>
             <CardContent className="space-y-4">
-              {upcomingSessions.map((session) => (
-                <SessionCard
-                  key={session.id}
-                  session={session}
-                  userRole={session.teacher.name === "You" ? "teacher" : "learner"}
-                  onJoin={() => {}}
-                />
-              ))}
+              {upcomingSessions.length > 0 ? (
+                upcomingSessions.map((session) => (
+                  <SessionCard
+                    key={session.id}
+                    session={session}
+                    userRole={session.role}
+                    onJoin={() => { }}
+                  />
+                ))
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Calendar className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                  <p>No upcoming sessions</p>
+                  <Button variant="link" asChild className="mt-2">
+                    <Link to="/discover">Find a teacher to get started</Link>
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

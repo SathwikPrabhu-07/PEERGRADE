@@ -4,10 +4,73 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* ===== CSS RESET & GLOBAL LAYOUT ===== */
+@layer base {
 
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    height: 100%;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    height: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+    overflow-x: hidden;
+    @apply bg-background text-foreground font-sans;
+  }
+
+  #root {
+    height: 100%;
+    min-height: 100vh;
+    width: 100%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  ul,
+  ol {
+    list-style: none;
+  }
+}
+
+/* ===== DESIGN SYSTEM TOKENS ===== */
 @layer base {
   :root {
     --background: 210 40% 98%;
@@ -130,6 +193,7 @@ All colors MUST be HSL.
   }
 }
 
+/* ===== GRADIENT UTILITIES ===== */
 .gradient-primary {
   background: var(--gradient-primary);
 }
@@ -140,14 +204,4 @@ All colors MUST be HSL.
 
 .gradient-hero {
   background: var(--gradient-hero);
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-  }
 }
