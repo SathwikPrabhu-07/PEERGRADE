@@ -8,33 +8,17 @@ const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const app = express();
 
 /**
- * FINAL SAFE CORS CONFIGURATION
- * -----------------------------
+ * CORS CONFIGURATION FOR DEPLOYMENT
+ * ----------------------------------
+ * - Allows all origins temporarily for hackathon/demo deployment
  * - Same config for normal + preflight requests
- * - Prevents invalid header characters
- * - Works on Render + Vercel
- * - Works locally
+ * - Can be tightened post-submission to restrict to Vercel domain only
  */
 const corsOptions = {
-    origin: (origin, callback) => {
-        // Allow requests without origin (health checks, curl, Postman)
-        if (!origin) return callback(null, true);
-
-        const allowedOrigins = [
-            'http://localhost:5173',
-            'http://localhost:3000',
-            process.env.FRONTEND_URL && process.env.FRONTEND_URL.trim(),
-        ].filter(Boolean);
-
-        if (allowedOrigins.includes(origin)) {
-            return callback(null, true);
-        }
-
-        return callback(new Error(`CORS blocked for origin: ${origin}`));
-    },
+    origin: true, // Allow all origins temporarily
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-user-id'],
 };
 
 // ✅ APPLY SAME CORS CONFIG EVERYWHERE

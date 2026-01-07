@@ -133,7 +133,7 @@ export interface RegisterPayload {
  * POST /auth/register
  */
 export async function registerUser(payload: RegisterPayload): Promise<AuthResponse> {
-    return baseFetch<AuthResponse>('/auth/register', {
+    return baseFetch<AuthResponse>('/api/auth/register', {
         method: 'POST',
         body: JSON.stringify(payload),
     });
@@ -144,7 +144,7 @@ export async function registerUser(payload: RegisterPayload): Promise<AuthRespon
  * POST /auth/login
  */
 export async function loginUser(payload: LoginPayload): Promise<AuthResponse> {
-    return baseFetch<AuthResponse>('/auth/login', {
+    return baseFetch<AuthResponse>('/api/auth/login', {
         method: 'POST',
         body: JSON.stringify(payload),
     });
@@ -155,7 +155,7 @@ export async function loginUser(payload: LoginPayload): Promise<AuthResponse> {
  * GET /auth/me (requires x-user-id header)
  */
 export async function getCurrentUser(userId: string): Promise<{ user: User }> {
-    return baseFetch<{ user: User }>('/auth/me', {
+    return baseFetch<{ user: User }>('/api/auth/me', {
         method: 'GET',
         headers: {
             'x-user-id': userId,
