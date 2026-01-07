@@ -8,21 +8,22 @@ const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 const app = express();
 
 /**
- * SAFE CORS CONFIGURATION
- * ----------------------
+ * FINAL SAFE CORS CONFIGURATION
+ * -----------------------------
+ * - Same config for normal + preflight requests
  * - Prevents invalid header characters
  * - Works on Render + Vercel
  * - Works locally
  */
-app.use(cors({
+const corsOptions = {
     origin: (origin, callback) => {
-        // Allow requests without origin (health checks, Postman, curl)
+        // Allow requests without origin (health checks, curl, Postman)
         if (!origin) return callback(null, true);
 
         const allowedOrigins = [
             'http://localhost:5173',
             'http://localhost:3000',
-            process.env.FRONTEND_URL ? process.env.FRONTEND_URL.trim() : null,
+            process.env.FRONTEND_URL && process.env.FRONTEND_URL.trim(),
         ].filter(Boolean);
 
         if (allowedOrigins.includes(origin)) {
@@ -34,10 +35,11 @@ app.use(cors({
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+};
 
-// Explicit preflight handling (important for browsers)
-app.options('*', cors());
+// ✅ APPLY SAME CORS CONFIG EVERYWHERE
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
