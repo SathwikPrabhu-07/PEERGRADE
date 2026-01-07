@@ -201,7 +201,7 @@ export interface AddSkillPayload {
  * GET /skills
  */
 export async function getSkills(userId: string): Promise<SkillsResponse> {
-    return baseFetch<SkillsResponse>('/skills', {
+    return baseFetch<SkillsResponse>('/api/skills', {
         method: 'GET',
         headers: {
             'x-user-id': userId,
@@ -214,7 +214,7 @@ export async function getSkills(userId: string): Promise<SkillsResponse> {
  * POST /skills
  */
 export async function addSkill(userId: string, payload: AddSkillPayload): Promise<{ success: boolean; data: Skill }> {
-    return baseFetch<{ success: boolean; data: Skill }>('/skills', {
+    return baseFetch<{ success: boolean; data: Skill }>('/api/skills', {
         method: 'POST',
         headers: {
             'x-user-id': userId,
@@ -228,7 +228,7 @@ export async function addSkill(userId: string, payload: AddSkillPayload): Promis
  * DELETE /skills/:id
  */
 export async function deleteSkill(userId: string, skillId: string): Promise<{ success: boolean; message: string }> {
-    return baseFetch<{ success: boolean; message: string }>(`/skills/${skillId}`, {
+    return baseFetch<{ success: boolean; message: string }>(`/api/skills/${skillId}`, {
         method: 'DELETE',
         headers: {
             'x-user-id': userId,
@@ -255,7 +255,7 @@ export interface AllTeachingSkill {
  * Used by Discover page to join with teachers at render time
  */
 export async function getAllTeachingSkills(userId: string): Promise<{ success: boolean; data: AllTeachingSkill[]; count: number }> {
-    return baseFetch<{ success: boolean; data: AllTeachingSkill[]; count: number }>('/skills/all-teaching', {
+    return baseFetch<{ success: boolean; data: AllTeachingSkill[]; count: number }>('/api/skills/all-teaching', {
         method: 'GET',
         headers: {
             'x-user-id': userId,
@@ -317,7 +317,7 @@ export async function getTeachers(filters?: TeachersFilters): Promise<TeachersRe
     }
 
     const queryString = params.toString();
-    const endpoint = queryString ? `/teachers?${queryString}` : '/teachers';
+    const endpoint = queryString ? `/api/teachers?${queryString}` : '/api/teachers';
 
     return baseFetch<TeachersResponse>(endpoint, {
         method: 'GET',
@@ -390,7 +390,7 @@ export interface ConfirmPayload {
  * GET /requests
  */
 export async function getRequests(userId: string): Promise<RequestsResponse> {
-    return baseFetch<RequestsResponse>('/requests', {
+    return baseFetch<RequestsResponse>('/api/requests', {
         method: 'GET',
         headers: {
             'x-user-id': userId,
@@ -403,7 +403,7 @@ export async function getRequests(userId: string): Promise<RequestsResponse> {
  * GET /requests/:id
  */
 export async function getRequestDetail(userId: string, requestId: string): Promise<{ success: boolean; data: SessionRequest }> {
-    return baseFetch<{ success: boolean; data: SessionRequest }>(`/requests/${requestId}`, {
+    return baseFetch<{ success: boolean; data: SessionRequest }>(`/api/requests/${requestId}`, {
         method: 'GET',
         headers: {
             'x-user-id': userId,
@@ -416,7 +416,7 @@ export async function getRequestDetail(userId: string, requestId: string): Promi
  * POST /requests
  */
 export async function sendRequest(userId: string, payload: SendRequestPayload): Promise<{ success: boolean; data: SessionRequest }> {
-    return baseFetch<{ success: boolean; data: SessionRequest }>('/requests', {
+    return baseFetch<{ success: boolean; data: SessionRequest }>('/api/requests', {
         method: 'POST',
         headers: {
             'x-user-id': userId,
@@ -430,7 +430,7 @@ export async function sendRequest(userId: string, payload: SendRequestPayload): 
  * PUT /requests/:id/accept
  */
 export async function acceptRequest(userId: string, requestId: string): Promise<{ success: boolean }> {
-    return baseFetch<{ success: boolean }>(`/requests/${requestId}/accept`, {
+    return baseFetch<{ success: boolean }>(`/api/requests/${requestId}/accept`, {
         method: 'PUT',
         headers: {
             'x-user-id': userId,
@@ -447,7 +447,7 @@ export async function confirmRequest(
     requestId: string,
     payload: ConfirmPayload
 ): Promise<{ success: boolean; data: { request: SessionRequest; session: Session } }> {
-    return baseFetch<{ success: boolean; data: { request: SessionRequest; session: Session } }>(`/requests/${requestId}/confirm`, {
+    return baseFetch<{ success: boolean; data: { request: SessionRequest; session: Session } }>(`/api/requests/${requestId}/confirm`, {
         method: 'POST',
         headers: {
             'x-user-id': userId,
@@ -461,7 +461,7 @@ export async function confirmRequest(
  * PUT /requests/:id/reject
  */
 export async function rejectRequest(userId: string, requestId: string): Promise<{ success: boolean }> {
-    return baseFetch<{ success: boolean }>(`/requests/${requestId}/reject`, {
+    return baseFetch<{ success: boolean }>(`/api/requests/${requestId}/reject`, {
         method: 'PUT',
         headers: {
             'x-user-id': userId,
@@ -474,7 +474,7 @@ export async function rejectRequest(userId: string, requestId: string): Promise<
  * DELETE /requests/:id
  */
 export async function cancelRequest(userId: string, requestId: string): Promise<{ success: boolean }> {
-    return baseFetch<{ success: boolean }>(`/requests/${requestId}`, {
+    return baseFetch<{ success: boolean }>(`/api/requests/${requestId}`, {
         method: 'DELETE',
         headers: {
             'x-user-id': userId,
@@ -487,7 +487,7 @@ export async function cancelRequest(userId: string, requestId: string): Promise<
  * GET /requests/:id/messages
  */
 export async function getMessages(userId: string, requestId: string): Promise<{ success: boolean; data: Message[] }> {
-    return baseFetch<{ success: boolean; data: Message[] }>(`/requests/${requestId}/messages`, {
+    return baseFetch<{ success: boolean; data: Message[] }>(`/api/requests/${requestId}/messages`, {
         method: 'GET',
         headers: {
             'x-user-id': userId,
@@ -500,7 +500,7 @@ export async function getMessages(userId: string, requestId: string): Promise<{ 
  * POST /requests/:id/messages
  */
 export async function sendMessage(userId: string, requestId: string, text: string): Promise<{ success: boolean; data: Message }> {
-    return baseFetch<{ success: boolean; data: Message }>(`/requests/${requestId}/messages`, {
+    return baseFetch<{ success: boolean; data: Message }>(`/api/requests/${requestId}/messages`, {
         method: 'POST',
         headers: {
             'x-user-id': userId,
@@ -551,7 +551,7 @@ export interface SessionsResponse {
  * GET /sessions
  */
 export async function getSessions(userId: string): Promise<SessionsResponse> {
-    return baseFetch<SessionsResponse>('/sessions', {
+    return baseFetch<SessionsResponse>('/api/sessions', {
         method: 'GET',
         headers: {
             'x-user-id': userId,
@@ -568,7 +568,7 @@ export async function scheduleSession(
     sessionId: string,
     scheduledAt: string
 ): Promise<{ success: boolean; data: Session }> {
-    return baseFetch<{ success: boolean; data: Session }>(`/sessions/${sessionId}/schedule`, {
+    return baseFetch<{ success: boolean; data: Session }>(`/api/sessions/${sessionId}/schedule`, {
         method: 'PUT',
         headers: {
             'x-user-id': userId,
@@ -585,7 +585,7 @@ export async function joinSession(
     userId: string,
     sessionId: string
 ): Promise<{ success: boolean; data: { session: Session; meetingUrl: string } }> {
-    return baseFetch<{ success: boolean; data: { session: Session; meetingUrl: string } }>(`/sessions/${sessionId}/join`, {
+    return baseFetch<{ success: boolean; data: { session: Session; meetingUrl: string } }>(`/api/sessions/${sessionId}/join`, {
         method: 'GET',
         headers: {
             'x-user-id': userId,
@@ -601,7 +601,7 @@ export async function completeSession(
     userId: string,
     sessionId: string
 ): Promise<{ success: boolean; message: string; data: Session }> {
-    return baseFetch<{ success: boolean; message: string; data: Session }>(`/sessions/${sessionId}/complete`, {
+    return baseFetch<{ success: boolean; message: string; data: Session }>(`/api/sessions/${sessionId}/complete`, {
         method: 'POST',
         headers: {
             'x-user-id': userId,
@@ -640,7 +640,7 @@ export async function getSessionFeedback(
     userId: string,
     sessionId: string
 ): Promise<FeedbackResponse> {
-    return baseFetch<FeedbackResponse>(`/sessions/${sessionId}/feedback`, {
+    return baseFetch<FeedbackResponse>(`/api/sessions/${sessionId}/feedback`, {
         method: 'GET',
         headers: {
             'x-user-id': userId,
@@ -658,7 +658,7 @@ export async function submitSessionFeedback(
     rating: number,
     comment?: string
 ): Promise<{ success: boolean; message: string; data: Feedback }> {
-    return baseFetch<{ success: boolean; message: string; data: Feedback }>(`/sessions/${sessionId}/feedback`, {
+    return baseFetch<{ success: boolean; message: string; data: Feedback }>(`/api/sessions/${sessionId}/feedback`, {
         method: 'POST',
         headers: {
             'x-user-id': userId,
@@ -711,7 +711,7 @@ export interface AssignmentsResponse {
  * GET /assignments
  */
 export async function getAssignments(userId: string): Promise<AssignmentsResponse> {
-    return baseFetch<AssignmentsResponse>('/assignments', {
+    return baseFetch<AssignmentsResponse>('/api/assignments', {
         method: 'GET',
         headers: {
             'x-user-id': userId,
@@ -727,7 +727,7 @@ export async function getAssignment(
     userId: string,
     assignmentId: string
 ): Promise<{ success: boolean; data: Assignment }> {
-    return baseFetch<{ success: boolean; data: Assignment }>(`/assignments/${assignmentId}`, {
+    return baseFetch<{ success: boolean; data: Assignment }>(`/api/assignments/${assignmentId}`, {
         method: 'GET',
         headers: {
             'x-user-id': userId,
@@ -743,7 +743,7 @@ export async function getSessionAssignments(
     userId: string,
     sessionId: string
 ): Promise<{ success: boolean; data: Assignment[] }> {
-    return baseFetch<{ success: boolean; data: Assignment[] }>(`/assignments/session/${sessionId}`, {
+    return baseFetch<{ success: boolean; data: Assignment[] }>(`/api/assignments/session/${sessionId}`, {
         method: 'GET',
         headers: {
             'x-user-id': userId,
@@ -760,7 +760,7 @@ export async function submitAssignment(
     assignmentId: string,
     answers: Record<string, string>
 ): Promise<{ success: boolean; message: string; data: Assignment }> {
-    return baseFetch<{ success: boolean; message: string; data: Assignment }>(`/assignments/${assignmentId}/submit`, {
+    return baseFetch<{ success: boolean; message: string; data: Assignment }>(`/api/assignments/${assignmentId}/submit`, {
         method: 'POST',
         headers: {
             'x-user-id': userId,
@@ -779,7 +779,7 @@ export async function gradeAssignment(
     scores: Record<string, number>,
     comment?: string
 ): Promise<{ success: boolean; message: string; data: Assignment }> {
-    return baseFetch<{ success: boolean; message: string; data: Assignment }>(`/assignments/${assignmentId}/grade`, {
+    return baseFetch<{ success: boolean; message: string; data: Assignment }>(`/api/assignments/${assignmentId}/grade`, {
         method: 'POST',
         headers: {
             'x-user-id': userId,
@@ -805,7 +805,7 @@ export interface SkillScore {
  * GET /skill-scores
  */
 export async function getSkillScores(userId: string): Promise<{ success: boolean; data: SkillScore[] }> {
-    return baseFetch<{ success: boolean; data: SkillScore[] }>('/skill-scores', {
+    return baseFetch<{ success: boolean; data: SkillScore[] }>('/api/skill-scores', {
         method: 'GET',
         headers: {
             'x-user-id': userId,
@@ -867,7 +867,7 @@ export async function getCredibilityScore(): Promise<{ success: boolean; data: C
         throw new Error('Not authenticated - no user ID');
     }
 
-    return baseFetch<{ success: boolean; data: CredibilityStats }>('/users/me/credibility', {
+    return baseFetch<{ success: boolean; data: CredibilityStats }>('/api/users/me/credibility', {
         method: 'GET',
         headers: {
             'x-user-id': userId,
