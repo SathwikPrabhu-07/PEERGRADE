@@ -7,11 +7,38 @@ const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 // Initialize Express app
 const app = express();
 
-// Middleware
+/**
+ * SAFE CORS CONFIGURATION
+ * ----------------------
+ * - Prevents invalid header characters
+ * - Works on Render + Vercel
+ * - Works locally
+ */
 app.use(cors({
-    origin: config.cors.frontendUrl,
+    origin: (origin, callback) => {
+        // Allow requests without origin (health checks, Postman, curl)
+        if (!origin) return callback(null, true);
+
+        const allowedOrigins = [
+            'http://localhost:5173',
+            'http://localhost:3000',
+            process.env.FRONTEND_URL ? process.env.FRONTEND_URL.trim() : null,
+        ].filter(Boolean);
+
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+
+        return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+// Explicit preflight handling (important for browsers)
+app.options('*', cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -47,9 +74,9 @@ app.listen(PORT, () => {
 🚀 PeerGrade Backend Server Started
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📍 Environment: ${config.server.nodeEnv}
-🌐 Server URL:  http://localhost:${PORT}
-📚 API Base:    http://localhost:${PORT}/api
-❤️  Health:     http://localhost:${PORT}/api/health
+🌐 Server Port: ${PORT}
+📚 API Base:    /api
+❤️  Health:     /api/health
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   `);
 });
