@@ -9,6 +9,11 @@ The platform enables **peer-to-peer learning, structured assessments, and credib
 Instead of relying on resumes or certificates alone, PeerGrade measures **real knowledge through interaction and evaluation**.
 
 ---
+## 🌐 Live Demo
+
+Try the deployed application here:
+
+👉 https://peergrade.vercel.app/
 
 # 🌍 Vision
 
